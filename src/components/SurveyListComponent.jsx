@@ -1,33 +1,36 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { getSurveys } from './api';
 
 const SurveyListComponent = () => {
-    const[surveyData,SetSurveyData]=useState([])
-    useEffect(()=>{
-        const fetchData =async()=>{
-            try{
-                const res=await axios.get("https://edstem.onrender.com/surveys/list")
-                SetSurveyData(res.data)
-            }catch(err){
-                console.error(err)
-            }
-        }
-        fetchData()
-    },[])
+    const [surveys, setSurveys] = useState([]);
+
+  useEffect(() => {
+    // Fetch surveys when the component mounts
+    fetchSurveys();
+  }, []);
+
+  const fetchSurveys = async () => {
+    try {
+      const data = await getSurveys();
+      setSurveys(data.surveys);
+    } catch (error) {
+      console.error('Error fetching surveys:', error.message);
+    }
+  };
   return (
-    <div>
-        <h2>
-            List
-        </h2>
-        <ul>
-        {surveyData.map((survey)=>{
-<li key={survey._id}>
-    <p>{survey.Name}</p>
-    <p>{survey.Email}</p>
-</li>
-        })}
-        </ul>
-    </div>
+    <div className="survey-list">
+    <h2>Survey List</h2>
+    <ul>
+      {surveys.map((survey) => (
+        <li key={survey._id}>
+          <strong>Name:</strong> {survey.name}<br />
+          <strong>Education Level:</strong> {survey.educationLevel}<br />
+          {/* Add other survey details */}
+        </li>
+      ))}
+    </ul>
+  </div>
   )
 }
 
